@@ -1207,11 +1207,24 @@
                 }));
 
                 // 2. Prepare 7 Slots (6 Answer cards + 1 Empty Slot)
-                let answerItems = QUESTIONS_DATA.map(q => ({
-                    id: q.id,
-                    text: q.answer,
-                    isEmpty: false
-                })).sort(() => Math.random() - 0.5);
+                let answerItems = QUESTIONS_DATA.map(q => {
+                    // Show the full correct answer text instead of A/B/C/D.
+                    // q.answer stores the correct letter; find the matching option
+                    // and remove the leading "A. ", "B. ", "C. ", or "D. ".
+                    const correctOption = q.options.find(option =>
+                        option.trim().startsWith(q.answer + ".")
+                    ) || "";
+                    const answerText = correctOption.replace(
+                        new RegExp("^" + q.answer + "\\.\\s*"),
+                        ""
+                    ).trim();
+
+                    return {
+                        id: q.id,
+                        text: answerText,
+                        isEmpty: false
+                    };
+                }).sort(() => Math.random() - 0.5);
 
                 const emptySlotIdx = Math.floor(Math.random() * 7);
                 this.slots = [];
